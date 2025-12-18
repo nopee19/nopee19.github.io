@@ -35,7 +35,7 @@ function resetForm() {
     document.getElementById('biodataForm').scrollIntoView({ behavior: 'smooth' });
 }
 
-// --- PHOTO LOGIC (NEW) ---
+// --- PHOTO LOGIC ---
 
 function triggerFileInput() {
     document.getElementById('photo-input').click();
@@ -166,7 +166,21 @@ function addToHistory(data) {
     // Add timestamp to data
     data.timestamp = new Date().toISOString();
     history.unshift(data); // Add to beginning
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+    try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+            alert('Penyimpanan penuh! Data tersimpan tanpa foto.');
+            // Try saving without image if too large
+            data.profileImg = '';
+            history[0] = data; // Update recent item
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        } else {
+            console.error('Storage error:', e);
+        }
+    }
+
     renderHistory();
 }
 
@@ -195,9 +209,13 @@ function renderHistory() {
         return;
     }
 
-    history.forEach(item => {
+    history.forEach((item, index) => {
         const li = document.createElement('li');
         li.className = 'history-item';
+        // Make clickable to view details
+        li.onclick = () => loadHistoryItem(index);
+        li.style.cursor = 'pointer';
+        li.title = "Klik untuk melihat detail";
 
         const date = new Date(item.timestamp).toLocaleDateString('id-ID', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -210,13 +228,61 @@ function renderHistory() {
             <div class="history-info">
                 <h4>${item.nama}</h4>
                 <p>${item.univ} - ${item.prodi}</p>
-                <p style="font-size:0.7rem;color:#aaa;">${date}</p>
+                <p style="font-size:0.7rem;color:#aaa;">${date} <span style="color:var(--primary-color)">(Klik untuk lihat)</span></p>
             </div>
         `;
         list.appendChild(li);
     });
 }
+
+function loadHistoryItem(index) {
+    const history = getHistory();
+    if (history[index]) {
+        displayResult(history[index]);
+        showResult();
+    }
+}
 // ----------------------
+
+function enableEditing() {
+    const inputs = document.querySelectorAll('#biodataForm input, #biodataForm select');
+    inputs.forEach(input => {
+        input.removeAttribute('readonly');
+        input.removeAttribute('disabled');
+    });
+
+    const buttons = document.querySelectorAll('.photo-actions button');
+    buttons.forEach(btn => btn.removeAttribute('disabled'));
+
+    const photoInput = document.getElementById('photo-input');
+    photoInput.removeAttribute('disabled');
+
+    const btnEdit = document.getElementById('btn-edit');
+    btnEdit.disabled = true;
+    btnEdit.innerHTML = '<i class="fas fa-edit"></i> Editing...';
+}
+
+// Helper to display data in result section
+function displayResult(data) {
+    document.getElementById('result-nama').textContent = data.nama;
+    document.getElementById('result-email').textContent = data.email;
+    document.getElementById('result-alamat').textContent = data.alamat;
+    document.getElementById('result-ttl').textContent = data.ttl;
+    document.getElementById('result-agama').textContent = data.agama;
+    document.getElementById('result-gender').textContent = data.gender;
+
+    document.getElementById('result-univ').textContent = data.univ;
+    document.getElementById('result-fakultas').textContent = data.fakultas;
+    document.getElementById('result-prodi').textContent = data.prodi;
+    document.getElementById('result-nim').textContent = data.nim;
+
+    // Set Result Image
+    if (data.profileImg && data.profileImg !== 'https://via.placeholder.com/150') {
+        document.getElementById('result-img').src = data.profileImg;
+    } else {
+        document.getElementById('result-img').src = 'https://via.placeholder.com/150';
+    }
+}
 
 // Submit Data
 function submitData() {
@@ -255,28 +321,7 @@ function submitData() {
     const profileImgSrc = document.getElementById('profile-img').src;
     const isProfileHidden = document.getElementById('profile-img').classList.contains('hidden');
 
-    // Set Result Values
-    document.getElementById('result-nama').textContent = nama;
-    document.getElementById('result-email').textContent = email;
-    document.getElementById('result-alamat').textContent = `${kec}, ${kab}, ${prov}`;
-    document.getElementById('result-ttl').textContent = `${dob} (${umur} Tahun)`;
-    document.getElementById('result-agama').textContent = agama;
-    document.getElementById('result-gender').textContent = gender;
-
-    document.getElementById('result-univ').textContent = univ;
-    document.getElementById('result-fakultas').textContent = fak;
-    document.getElementById('result-prodi').textContent = prodi;
-    document.getElementById('result-nim').textContent = nim;
-
-    // Set Result Image
-    if (profileImgSrc && !isProfileHidden) {
-        document.getElementById('result-img').src = profileImgSrc;
-    } else {
-        // Default placeholder if none
-        document.getElementById('result-img').src = 'https://via.placeholder.com/150';
-    }
-
-    // --- SAVE TO HISTORY ---
+    // Prepare data object
     const dataToSave = {
         nama,
         email,
@@ -290,6 +335,11 @@ function submitData() {
         nim,
         profileImg: (!isProfileHidden) ? profileImgSrc : 'https://via.placeholder.com/150'
     };
+
+    // Update Result View
+    displayResult(dataToSave);
+
+    // --- SAVE TO HISTORY ---
     addToHistory(dataToSave);
     // -----------------------
 
