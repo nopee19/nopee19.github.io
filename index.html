@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biodata Interaktif</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+
+        <!-- SECTION 1: WELCOME SCREEN -->
+        <section id="welcome-section" class="active-section">
+            <div class="glass-card welcome-card">
+                <h1>Selamat Datang</h1>
+                <p>Silahkan mengisi biodata diri Anda untuk melanjutkan.</p>
+                <div class="welcome-actions">
+                    <button class="btn btn-primary" onclick="showForm()">Mulai Isi Biodata</button>
+                    <button class="btn btn-secondary" onclick="toggleHistory()" id="btn-history">Lihat Riwayat</button>
+                </div>
+
+                <!-- History Section (Hidden by default) -->
+                <div id="history-section" class="history-container hidden">
+                    <h3>Riwayat Pengisian</h3>
+                    <ul id="history-list">
+                        <!-- History items will be injected here -->
+                    </ul>
+                    <button class="btn-text" onclick="clearHistory()">Hapus Riwayat</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: FORM SECTION -->
+        <section id="form-section">
+            <div class="glass-card form-card">
+                <header class="form-header">
+                    <h2>Formulir Data Diri</h2>
+                    <p>Lengkapi informasi Anda di bawah ini</p>
+                </header>
+
+                <form id="biodataForm">
+                    <!-- Changed form-grid to vertical-form class for clarity -->
+                    <div class="vertical-form">
+
+                        <!-- Profile Photo Upload -->
+                        <div class="profile-upload-section">
+                            <div class="profile-preview" id="preview-container">
+                                <img src="" alt="Profile Preview" id="profile-img" class="hidden">
+                                <span id="upload-placeholder"><i class="fas fa-camera fa-2x"></i></span>
+                            </div>
+
+                            <div class="photo-actions">
+                                <button type="button" class="btn-icon" onclick="openCamera()" title="Ambil Foto">
+                                    <i class="fas fa-camera"></i> Ambil Foto
+                                </button>
+                                <button type="button" class="btn-icon" onclick="triggerFileInput()" title="Pilih File">
+                                    <i class="fas fa-upload"></i> Pilih File
+                                </button>
+                                <button type="button" class="btn-icon delete" onclick="deletePhoto()"
+                                    title="Hapus Foto">
+                                    <i class="fas fa-trash-alt"></i> Hapus
+                                </button>
+                            </div>
+                            <input type="file" id="photo-input" accept="image/*" onchange="previewImage(event)" hidden>
+                        </div>
+
+                        <!-- Camera Modal (Hidden) -->
+                        <div id="camera-modal" class="camera-modal hidden">
+                            <div class="camera-content">
+                                <video id="video" autoplay playsinline></video>
+                                <canvas id="canvas" class="hidden"></canvas>
+                                <div class="camera-controls">
+                                    <button type="button" class="btn btn-primary" onclick="capturePhoto()">Ambil
+                                        Gambar</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="closeCamera()">Batal</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inputs with Icons -->
+                        <div class="form-content">
+                            <h3><i class="fas fa-user-circle"></i> Biodata Diri</h3>
+
+                            <div class="input-group">
+                                <label for="nama"><i class="fas fa-user"></i> Nama Lengkap</label>
+                                <input type="text" id="nama" required placeholder="Masukkan Nama Anda">
+                            </div>
+
+                            <fieldset class="address-group">
+                                <legend><i class="fas fa-map-marker-alt"></i> Alamat</legend>
+                                <div class="input-group">
+                                    <label for="provinsi">Provinsi</label>
+                                    <input type="text" id="provinsi" placeholder="Masukkan Provinsi" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="kabupaten">Kabupaten/Kota</label>
+                                    <input type="text" id="kabupaten" placeholder="Masukkan Kabupaten/Kota" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="kecamatan">Kecamatan</label>
+                                    <input type="text" id="kecamatan" placeholder="Masukkan Kecamatan" required>
+                                </div>
+                            </fieldset>
+
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="dob"><i class="fas fa-calendar-alt"></i> Tanggal Lahir</label>
+                                    <input type="date" id="dob" onchange="calculateAge()">
+                                </div>
+                                <div class="input-group">
+                                    <label for="umur"><i class="fas fa-hourglass-half"></i> Umur</label>
+                                    <input type="number" id="umur" readonly placeholder="Otomatis">
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fas fa-venus-mars"></i> Jenis Kelamin</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="gender" value="Laki-laki" required>
+                                        Laki-laki</label>
+                                    <label><input type="radio" name="gender" value="Perempuan"> Perempuan</label>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="agama"><i class="fas fa-pray"></i> Agama</label>
+                                <select id="agama" onchange="checkOtherReligion()">
+                                    <option value="">Pilih Agama</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                    <option value="Lainnya">Lainnya...</option>
+                                </select>
+                                <input type="text" id="agama-lain" class="hidden mt-2"
+                                    placeholder="Sebutkan agama anda">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" id="email" placeholder="contoh@email.com" required>
+                            </div>
+
+                            <h3 class="mt-4"><i class="fas fa-graduation-cap"></i> Pendidikan</h3>
+                            <div class="education-card">
+                                <div class="input-group">
+                                    <label for="univ"><i class="fas fa-university"></i> Universitas</label>
+                                    <input type="text" id="univ" placeholder="Masukkan Nama Universitas" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="fakultas"><i class="fas fa-building"></i> Fakultas</label>
+                                    <input type="text" id="fakultas" placeholder="Masukkan Nama Fakultas" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="prodi"><i class="fas fa-book-reader"></i> Program Studi</label>
+                                    <input type="text" id="prodi" placeholder="Masukkan Program Studi" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="nim"><i class="fas fa-id-card"></i> NIM</label>
+                                    <input type="text" id="nim" placeholder="Masukkan NIM" required>
+                                </div>
+                            </div>
+                        </div> <!-- End form-content -->
+
+                    </div> <!-- End vertical-form -->
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset / Update</button>
+                        <button type="button" class="btn btn-primary" onclick="submitData()">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 3: RESULT SECTION -->
+        <section id="result-section">
+            <div class="glass-card result-card">
+                <h2>Terimakasih!</h2>
+                <p>Biodata Anda telah berhasil disimpan.</p>
+
+                <div class="result-content">
+                    <div class="result-header">
+                        <img id="result-img" src="" alt="Profile" class="result-avatar">
+                        <h3 id="result-nama">Nama Pengguna</h3>
+                        <p id="result-email">email@example.com</p>
+                    </div>
+
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <span class="label"><i class="fas fa-map-marker-alt"></i> Alamat:</span>
+                            <span class="value" id="result-alamat">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label"><i class="fas fa-birthday-cake"></i> TTL / Umur:</span>
+                            <span class="value" id="result-ttl">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label"><i class="fas fa-pray"></i> Agama:</span>
+                            <span class="value" id="result-agama">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label"><i class="fas fa-venus-mars"></i> Jenis Kelamin:</span>
+                            <span class="value" id="result-gender">-</span>
+                        </div>
+                        <div class="separator"></div>
+                        <h4><i class="fas fa-graduation-cap"></i> Pendidikan</h4>
+                        <div class="detail-item">
+                            <span class="label">Universitas:</span>
+                            <span class="value" id="result-univ">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Fakultas:</span>
+                            <span class="value" id="result-fakultas">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Prodi:</span>
+                            <span class="value" id="result-prodi">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">NIM:</span>
+                            <span class="value" id="result-nim">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn btn-accent" onclick="showForm()">Edit Kembali</button>
+                    <button class="btn btn-secondary" onclick="returnToMain()">Kembali ke Halaman Utama</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
