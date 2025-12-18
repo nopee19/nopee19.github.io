@@ -27,7 +27,8 @@ body {
     color: var(--text-main);
     overflow-x: hidden;
     position: relative;
-    padding: 40px 0; /* Add padding for vertical scroll on small screens */
+    padding: 40px 0;
+    /* Add padding for vertical scroll on small screens */
 }
 
 /* Background Animated Shapes */
@@ -58,14 +59,23 @@ body {
 }
 
 @keyframes float {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(30px, 50px); }
-    100% { transform: translate(0, 0); }
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(30px, 50px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
 }
 
 .container {
     width: 100%;
-    max-width: 800px; /* Reduced max-width for vertical look */
+    max-width: 800px;
+    /* Reduced max-width for vertical look */
     padding: 20px;
     perspective: 1000px;
 }
@@ -212,7 +222,8 @@ input[type="number"],
 input[type="date"],
 select {
     width: 100%;
-    padding: 12px 40px 12px 15px; /* Right padding */
+    padding: 12px 40px 12px 15px;
+    /* Right padding */
     border: 1px solid rgba(255, 255, 255, 0.8);
     background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
@@ -243,6 +254,7 @@ legend {
     color: #395886;
     font-weight: 600;
 }
+
 legend i {
     margin-right: 5px;
 }
@@ -280,7 +292,7 @@ legend i {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     padding: 20px;
     border-radius: 20px;
     margin-bottom: 20px;
@@ -323,7 +335,7 @@ legend i {
     cursor: pointer;
     font-size: 0.85rem;
     color: #555;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -350,7 +362,7 @@ legend i {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -397,7 +409,8 @@ video {
 }
 
 .hidden {
-    display: none !important; /* Force hide */
+    display: none !important;
+    /* Force hide */
 }
 
 .mt-2 {
@@ -515,6 +528,14 @@ video {
     display: flex;
     align-items: center;
     gap: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: #fdfdfd;
 }
 
 .history-avatar {
@@ -556,20 +577,21 @@ video {
     .container {
         padding: 10px;
     }
-    
+
     .glass-card {
         padding: 20px;
     }
-    
+
     .input-row {
         flex-direction: column;
         gap: 0;
     }
-    
-    .form-actions, .result-actions {
+
+    .form-actions,
+    .result-actions {
         flex-direction: column;
     }
-    
+
     .btn {
         width: 100%;
     }
